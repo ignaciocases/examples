@@ -8,10 +8,10 @@ import torch.nn as nn
 
 from torchtext import data
 from torchtext import datasets
+from torchtext.vocab import GloVe
 
 from model import SNLIClassifier
 from util import get_args, makedirs
-
 
 args = get_args()
 torch.cuda.set_device(args.gpu)
@@ -26,7 +26,8 @@ if args.word_vectors:
     if os.path.isfile(args.vector_cache):
         inputs.vocab.vectors = torch.load(args.vector_cache)
     else:
-        inputs.vocab.load_vectors(wv_dir=args.data_cache, wv_type=args.word_vectors, wv_dim=args.d_embed)
+        # FIXME: quick fix. Do bring the actual arguments
+        inputs.vocab.load_vectors(vectors=GloVe(name='6B', dim=300))
         makedirs(os.path.dirname(args.vector_cache))
         torch.save(inputs.vocab.vectors, args.vector_cache)
 answers.build_vocab(train)
